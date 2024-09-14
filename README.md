@@ -1,7 +1,7 @@
 
 # 📦 sort-by-object
 
-**`sort-by-object`** is a utility function that allows sorting arrays of objects based on nested properties. It supports sorting both strings and numbers, and allows specifying the sort order (`asc` or `desc`).
+**`sort-by-object`** is a utility function that allows sorting arrays of objects based on nested properties. It supports sorting both strings and numbers, and allows specifying the sort order (`asc` or `desc`). Additionally, you can control whether the original array is mutated or if a new sorted array is returned.
 
 ## 🚀 Installation
 
@@ -26,14 +26,12 @@ const data = [
   { name: 'Bob', age: 22 },
 ];
 
-// Sort by 'name' in ascending order
-const sortedByName = sortByObject(data, ['name'], 'asc');
+// Sort by 'age' in ascending order and mutate the original array (default)
+sortByObject(data, { keyPath: ['age'], order: 'asc' });
 
-// Sort by 'age' in descending order
-const sortedByAge = sortByObject(data, ['age'], 'desc');
-
+// Sort by 'name' without mutating the original array (creates a copy)
+const sortedByName = sortByObject(data, { keyPath: ['name'], order: 'asc', mutate: false });
 console.log(sortedByName);
-console.log(sortedByAge);
 ```
 
 ### Nested Key Example
@@ -42,10 +40,11 @@ console.log(sortedByAge);
 const nestedData = [
   { user: { info: { name: 'John' } }, score: 10 },
   { user: { info: { name: 'Alice' } }, score: 15 },
+  { user: { info: { name: 'Bob' } }, score: 5 },
 ];
 
-// Sort by nested 'user.info.name' in ascending order
-const sortedByNestedName = sortByObject(nestedData, ['user', 'info', 'name'], 'asc');
+// Sort by nested 'user.info.name' in ascending order without mutating the original array
+const sortedByNestedName = sortByObject(nestedData, { keyPath: ['user', 'info', 'name'], order: 'asc', mutate: false });
 console.log(sortedByNestedName);
 ```
 
@@ -54,23 +53,32 @@ console.log(sortedByNestedName);
 ### Function Signature
 
 ```ts
-function sortByObject<T>(array: T[], keyPath: (keyof T | string)[], order: SortOrder = 'asc'): T[];
+function sortByObject<T>(array: T[], options: SortOptions): T[];
 ```
 
 - **`array` (T[]):** The array of objects to be sorted.
-- **`keyPath` (Array<string | keyof T>):** An array of strings or keys representing the path to the property.
-- **`order` (SortOrder):** The sort order. Accepts `'asc'` for ascending or `'desc'` for descending. Default is `'asc'`.
+- **`options` (SortOptions):** An object containing the sorting options.
+    - **`keyPath` (Array<string | number | symbol>):** The path to the nested key you want to sort by.
+    - **`order` (SortOrder):** Defines whether to sort in ascending (`'asc'`) or descending (`'desc'`) order (optional, default is `'asc'`).
+    - **`mutate` (boolean):** If `true`, the original array is sorted in place. If `false`, a new sorted array is returned (optional, default is `true`).
 
 ### Type Definitions
 
 ```ts
 type SortOrder = 'asc' | 'desc';
+
+interface SortOptions {
+  keyPath: (string | number | symbol)[];
+  order?: SortOrder;
+  mutate?: boolean;
+}
 ```
 
 ## 🔧 Options
 
-- **`keyPath` (Array<string | keyof T>):** The path to the nested key you want to sort by.
-- **`order` (SortOrder):** Defines whether to sort in ascending (`'asc'`) or descending (`'desc'`) order.
+- **`keyPath` (Array<string | number | symbol>):** The path to the nested key you want to sort by.
+- **`order` (SortOrder):** Defines whether to sort in ascending (`'asc'`) or descending (`'desc'`) order (default is `'asc'`).
+- **`mutate` (boolean):** If `true`, sorts the array in place. If `false`, returns a new sorted array (default is `true`).
 
 ## 📌 Notes
 

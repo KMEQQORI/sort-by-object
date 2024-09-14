@@ -1,6 +1,6 @@
 type SortOrder = 'asc' | 'desc';
 
-function getNestedValue<T>(obj: T, path: (keyof T | string)[]): any {
+function getNestedValue<T>(obj: T, path: (keyof T | string | number | symbol)[]): any {
 	return path.reduce((acc: any, key) => {
 		if (acc && typeof acc === 'object') {
 			return acc[key];
@@ -8,8 +8,20 @@ function getNestedValue<T>(obj: T, path: (keyof T | string)[]): any {
 		return undefined;
 	}, obj);
 }
-export function sortByObject<T>(array: T[], keyPath: (keyof T | string)[], order: SortOrder = 'asc'): T[] {
-	return array.sort((a, b) => {
+
+interface SortOptions {
+	keyPath: (string | number | symbol)[];
+	order?: SortOrder;
+	mutate?: boolean;
+}
+
+export function sortByObject<T>(array: T[], options: SortOptions): T[] {
+	const { keyPath, order = 'asc', mutate = true } = options;
+
+	// Crée une copie du tableau si mutate est faux, sinon trie directement le tableau original
+	const targetArray = mutate ? array : [...array];
+
+	return targetArray.sort((a, b) => {
 		const valA = getNestedValue(a, keyPath);
 		const valB = getNestedValue(b, keyPath);
 
@@ -20,6 +32,7 @@ export function sortByObject<T>(array: T[], keyPath: (keyof T | string)[], order
 		if (typeof valA === 'number' && typeof valB === 'number') {
 			return order === 'asc' ? valA - valB : valB - valA;
 		}
+
 		return 0;
 	});
 }

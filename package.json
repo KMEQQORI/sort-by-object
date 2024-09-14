@@ -1,6 +1,6 @@
 {
   "name": "sort-by-object",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "This module offers advanced sorting capabilities for arrays of objects, supporting sorting by deeply nested object properties. Users can specify the attribute path and choose between ascending or descending order. It handles both numeric and string values, ensuring flexible sorting for complex data structures.",
   "main": "index.js",
   "scripts": {
